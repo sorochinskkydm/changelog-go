@@ -18,10 +18,10 @@ func TestHealth(t *testing.T) {
 
 	app.routes().ServeHTTP(rec, req)
 
-    if rec.Code != http.StatusOK {
-        t.Fatalf("status = %d, want 200", rec.Code)
-    }
-    if got, want := rec.Body.String(), "{\"status\":\"ok\"}\n"; got != want {
-        t.Fatalf("body = %q, want %q", got, want)
-    }
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want 200", rec.Code)
+	}
+	if got, want := rec.Body.String(), "{\"status\":\"ok\"}\n"; got != want {
+		t.Fatalf("body = %q, want %q", got, want)
+	}
 }

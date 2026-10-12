@@ -9,21 +9,21 @@ import (
 
 type Config struct {
 	HTTP HTTPConfig
-	DB DBConfig
-	Log LogConfig
+	DB   DBConfig
+	Log  LogConfig
 }
 
 type HTTPConfig struct {
-	Port int `env:"SERVER_PORT" envDefault:"3000"`
+	Port            int           `env:"SERVER_PORT" envDefault:"3000"`
 	ShutdownTimeout time.Duration `env:"SHUTDOWN_TIMEOUT" envDefault:"10s"`
 }
 
 type DBConfig struct {
-	Host string `env:"DB_HOST,required"`
-	Port int `env:"DB_PORT" envDefault:"5432"`
-	User string `env:"DB_USER,required"`
+	Host     string `env:"DB_HOST,required"`
+	Port     int    `env:"DB_PORT" envDefault:"5432"`
+	User     string `env:"DB_USER,required"`
 	Password string `env:"DB_PASSWORD,required"`
-	DBName string `env:"DB_NAME,required"`
+	DBName   string `env:"DB_NAME,required"`
 }
 
 type LogConfig struct {
@@ -38,4 +38,3 @@ func Load() (*Config, error) {
 
 	return &cfg, nil
 }
-
