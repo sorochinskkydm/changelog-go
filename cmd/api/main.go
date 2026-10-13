@@ -10,6 +10,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/sorochinskkydm/changelog-go/internal/app"
 	"github.com/sorochinskkydm/changelog-go/internal/config"
+	"github.com/sorochinskkydm/changelog-go/internal/platform/postgres"
 )
 
 func main() {
@@ -27,7 +28,16 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	if err := app.New(cfg, log).Run(ctx); err != nil {
+	db, err := postgres.New(ctx, cfg.DB)
+	if err != nil {
+		log.Error("connect to db", "error", err)
+		os.Exit(1)
+	}
+
+	defer db.Close()
+	log.Info("connected to db", "host", cfg.DB.Host, "db", cfg.DB.DBName)
+
+	if err := app.New(cfg, log, app.Pinger(db)).Run(ctx); err != nil {
 		log.Error("App stopped with error", "error", err)
 		os.Exit(1)
 	}

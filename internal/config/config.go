@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"net/url"
 	"time"
 
 	"github.com/caarlos0/env/v11"
@@ -24,10 +25,24 @@ type DBConfig struct {
 	User     string `env:"DB_USER,required"`
 	Password string `env:"DB_PASSWORD,required"`
 	DBName   string `env:"DB_NAME,required"`
+	SSLMode  string `env:"DB_SSL_MODE" envDefault:"disable"`
+	MaxConns int32    `env:"DB_MAX_CONNS" envDefault:"10"`
 }
 
 type LogConfig struct {
 	Level string `env:"LOG_LEVEL" envDefault:"info"`
+}
+
+func (config DBConfig) DSN() string {
+	u := url.URL{
+		Scheme: "postgres",
+		User: url.UserPassword(config.User, config.Password),
+		Host: fmt.Sprintf("%s:%d", config.Host, config.Port),
+		Path: config.DBName,
+		RawQuery: url.Values{"sslmode": {config.SSLMode}}.Encode(),
+	}
+
+	return u.String()
 }
 
 func Load() (*Config, error) {
